@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <style>
+      body {
+        background: rgb(203, 17, 203);
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(
+          to right,
+          rgb(203, 17, 203),
+          rgb(37, 209, 252)
+        );
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(
+          to right,
+          rgb(203, 17, 203),
+          rgb(37, 209, 252)
+        );
+      }
+
+      h1 {
+        font-size: 36px; /* Kích thước lớn hơn */
+        margin-bottom: 20px; /* Khoảng cách dưới */
+      }
+
+      p {
+        font-size: 24px; /* Kích thước lớn hơn */
+      }
+      .tong {
+        text-align: center;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('../views/MainScreen.ejs') -%>
+    <div class="tong">
+      <h1>Welcome to Our Home Page</h1>
+      <p>This is a simple welcome message for the home page of our website.</p>
+    </div>
+  </body>
+</html>

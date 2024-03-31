@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết truyện</title>
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .cover-image {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+      .chapter-button {
+        display: block;
+        margin: 10px;
+        width: fit-content;
+      }
+      /* CSS cho đoạn chương */
+      #chapters {
+        margin-bottom: 20px; /* Thêm khoảng cách dưới đoạn chương */
+      }
+
+      /* CSS cho form thêm chương mới */
+      .chapter-container {
+        margin-top: 10px; /* Thêm khoảng cách phía trên form */
+      }
+      /* CSS cho form thêm chương mới */
+      .add-chapter-form {
+        margin-top: 20px; /* Thêm khoảng cách phía trên form */
+        padding: 20px; /* Thêm padding cho form */
+        border: 1px solid #ccc; /* Thêm viền cho form */
+        border-radius: 5px; /* Bo tròn góc cho form */
+        background-color: #f9f9f9; /* Màu nền cho form */
+      }
+
+      .add-chapter-form label {
+        display: block; /* Hiển thị mỗi label trên một dòng */
+        margin-bottom: 10px; /* Khoảng cách dưới mỗi label */
+      }
+
+      .add-chapter-form input[type="text"],
+      .add-chapter-form input[type="file"] {
+        width: calc(
+          100% - 20px
+        ); /* Độ rộng của input là 100% trừ đi khoảng cách padding */
+        padding: 8px; /* Thêm padding cho input */
+        margin-bottom: 10px; /* Khoảng cách dưới mỗi input */
+        border: 1px solid #ccc; /* Thêm viền cho input */
+        border-radius: 5px; /* Bo tròn góc cho input */
+        box-sizing: border-box; /* Box-sizing để tính cả padding và border vào độ rộng */
+      }
+
+      .add-chapter-form button[type="submit"] {
+        background-color: #4caf50; /* Màu nền cho button */
+        color: white; /* Màu chữ cho button */
+        padding: 10px 20px; /* Thêm padding cho button */
+        border: none; /* Loại bỏ viền cho button */
+        border-radius: 5px; /* Bo tròn góc cho button */
+        cursor: pointer; /* Biến con trỏ thành hình bàn tay khi di chuột qua button */
+      }
+
+      .add-chapter-form button[type="submit"]:hover {
+        background-color: #45a049; /* Màu nền khi hover qua button */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="story-title"></h1>
+      <p><strong>Tác giả:</strong> <span id="author"></span></p>
+      <p><strong>Thể loại:</strong> <span id="genre"></span></p>
+      <p><strong>Mô tả:</strong> <span id="description"></span></p>
+      <img src="" alt="Cover Image" id="cover-image" class="cover-image" />
+      <h2>Các chương</h2>
+      <div id="chapters"></div>
+
+      <!-- Form thêm chương mới -->
+      <form
+        id="add-chapter-form"
+        class="add-chapter-form"
+        enctype="multipart/form-data"
+      >
+        <label for="chap">Chương:</label>
+        <input type="text" id="chap" name="chap" required />
+        <label for="pdfFile">Tệp PDF:</label>
+        <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" required />
+        <button type="submit">Thêm Chương Mới</button>
+      </form>
+
+      <h2>Bình Luận</h2>
+      <div id="comments"></div>
+    </div>
+
+    <script>
+      // Lấy id của câu chuyện từ URL
+      const storyId = window.location.pathname.split("/").pop();
+
+      // Gửi yêu cầu GET để lấy dữ liệu của câu chuyện dựa trên id
+      fetch(`/api/get/${storyId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          // Hiển thị thông tin truyện trên trang
+          document.getElementById("story-title").textContent = data.title;
+          document.getElementById("author").textContent = data.author;
+          document.getElementById("genre").textContent = data.genre;
+          document.getElementById("description").textContent = data.description;
+          document.getElementById(
+            "cover-image"
+          ).src = `/images/${data.coverImage}`;
+
+          // Hiển thị các chương của câu chuyện (nếu có)
+          const chaptersContainer = document.getElementById("chapters");
+          if (data.chapters && data.chapters.length > 0) {
+            data.chapters.forEach((chapter) => {
+              // Tạo một phần tử div để chứa nút chương
+              const chapterDiv = document.createElement("div");
+              // Thêm lớp CSS mới vào phần tử div
+              chapterDiv.classList.add("chapter-container");
+
+              // Tạo một phần tử button để đại diện cho mỗi chương
+              const chapterButton = document.createElement("button");
+              chapterButton.textContent = `Chương ${chapter.chap}`;
+
+              // Gắn sự kiện click cho button để mở file PDF
+              chapterButton.addEventListener("click", () => {
+                window.open(`/pdfFile/${chapter.pdfFile}`, "_blank");
+              });
+
+              // Thêm button vào div container
+              chapterDiv.appendChild(chapterButton);
+
+              // Thêm div container vào container chính
+              chaptersContainer.appendChild(chapterDiv);
+            });
+          } else {
+            // Nếu không có chương nào, hiển thị thông báo tương ứng
+            chaptersContainer.textContent = "Không có chương nào ";
+          }
+        })
+        .catch((error) => console.error("Lỗi:", error));
+
+      // Lắng nghe sự kiện khi người dùng gửi form để thêm chương mới
+      document
+        .getElementById("add-chapter-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(event.target);
+          console.log("id", storyId);
+          try {
+            const response = await fetch(`/api/story/${storyId}/chapters`, {
+              method: "POST",
+              body: formData,
+            });
+            const data = await response.json();
+            alert(data.message);
+            // Load lại trang để cập nhật danh sách chương
+            location.reload();
+          } catch (error) {
+            console.error("Lỗi khi thêm chương:", error);
+            // alert("Đã xảy ra lỗi khi thêm chương");
+          }
+        });
+    </script>
+    <script>
+      // Gửi yêu cầu GET để lấy danh sách các bình luận
+      fetch(`/api/getCommentsByStoryId/${storyId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const commentsContainer = document.getElementById("comments");
+
+          // Kiểm tra nếu data.comments đã được định nghĩa và không phải là undefined
+          if (
+            data.comments &&
+            Array.isArray(data.comments) &&
+            data.comments.length > 0
+          ) {
+            // Hiển thị các bình luận nếu có
+            data.comments.forEach((comment) => {
+              // Gửi yêu cầu GET để lấy thông tin của người dùng từ userId
+              fetch(`/api/getUserById/${comment.userId._id}`)
+                .then((response) => response.json())
+                .then((userData) => {
+                  // Hiển thị tên của người dùng và nội dung của bình luận
+                  const commentElement = document.createElement("div");
+                  commentElement.textContent =
+                    `- ${comment.created_at}` +
+                    `\n name: ${userData.user.username}` +
+                    `- comment:` +
+                    `${comment.content}`;
+                  commentsContainer.appendChild(commentElement);
+                })
+                .catch((error) =>
+                  console.error("Lỗi khi lấy thông tin người dùng:", error)
+                );
+            });
+          } else {
+            // Hiển thị thông báo nếu không có bình luận nào
+            commentsContainer.textContent = "Chưa có bình luận nào ";
+          }
+        })
+        .catch((error) => console.error("Lỗi:", error));
+    </script>
+  </body>
+</html>

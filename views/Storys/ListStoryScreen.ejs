@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+
+    <style>
+      /* Thêm khoảng cách từ trên và dưới bảng */
+      .table {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      /* Điều chỉnh độ rộng của cột */
+      th,
+      td {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 150px;
+      }
+
+      /* Căn giữa hàng */
+      .center-row {
+        /* text-align: center; */
+        vertical-align: middle !important;
+      }
+
+      /* Căn giữa cột */
+      .center-column {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('../MainScreen.ejs') -%>
+    <div class="container mt-3">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+          <h2 class="text-start mb-0">Danh sách Truyện</h2>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <input
+            id="searchInput"
+              type="search"
+              class="form-control rounded"
+              placeholder="Search"
+              aria-label="Search"
+              aria-describedby="search-addon"
+              onkeyup="searchStories()"
+            />
+            <span class="input-group-text border-0" id="search-addon">
+              <i class="fas fa-search"></i>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2 d-flex justify-content-end">
+          <a href="/addlist" class="btn btn-primary">Thêm</a>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="center-row">ID</th>
+            <th class="center-row">Ảnh Bìa</th>
+            <th class="center-column center-row">Tên Truyện</th>
+            <th class="center-column center-row">Thể Loại</th>
+            <th class="center-column center-row">Tác Giả</th>
+            <th class="center-column center-row">Mô tả</th>
+            <th class="center-row">Tình trạng</th>
+            <th class="center-column center-row">Hot</th>
+            <th class="center-column center-row">Vip</th>
+            <th class="center-column center-row">Năm Xuất Bản</th>
+            <!-- <th class="center-column center-row">Bình Luận</th> -->
+            <th class="center-column center-row">Xóa</th>
+            <th class="center-column center-row">Sửa</th>
+            <th class="center-column center-row">Chi Tiết</th>
+          </tr>
+        </thead>
+        <tbody id="storyTableBody">
+          <!-- Dữ liệu của bảng sẽ được tạo ra động bằng JavaScript hoặc từ server -->
+        </tbody>
+      </table>
+    </div>
+  </body>
+<script>
+  function loadAllStories() {
+    fetch("/api/getallstory")
+      .then((response) => response.json())
+      .then((data) => {
+        const tableBody = document.getElementById("storyTableBody");
+        tableBody.innerHTML = ""; // Xóa hết dữ liệu cũ trong bảng trước khi thêm dữ liệu mới
+
+        // Duyệt qua mỗi câu chuyện và thêm vào bảng
+        data.forEach((story) => {
+          const row = `
+            <tr>
+              <td>${story._id.toString()}</td>
+              <td><img src="/images/${story.coverImage}" alt="Cover Image" style="max-width: 100px;"></td>
+              <td>${story.title}</td>
+              <td>${story.genre}</td>
+              <td>${story.author}</td>
+              <td>${story.description}</td>
+              <td>${story.status}</td>
+              <td>${story.isHot}</td>
+              <td>${story.isVIP}</td>
+              <td>${story.yearPublished}</td>
+
+              <td><button class="btn btn-danger" onclick="deleteConfirmation('${story._id}')">Xóa</button></td>
+              <td><button class="btn btn-success" onclick="editStory('${story._id}')">Sửa</button></td>
+              <td><a href="/detailStory/${story._id}">Chi tiết</a></td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        });
+      })
+      .catch((error) => console.error("Lỗi khi tải lại dữ liệu:", error));
+  }
+
+  // Gọi hàm loadAllStories() khi trang được tải lần đầu
+  document.addEventListener("DOMContentLoaded", function () {
+    loadAllStories();
+  });
+
+    function deleteConfirmation(storyId) {
+    // Hiển thị cửa sổ xác nhận
+    if (confirm("Bạn có chắc chắn muốn xoá câu chuyện này không?")) {
+      // Nếu người dùng đồng ý, thực hiện xóa câu chuyện
+      deleteStory(storyId);
+    }
+  }
+  
+  //ham  delete
+  function deleteStory(storyId) {
+    fetch(`/api/deleteStory/${storyId}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Xử lý phản hồi từ server (nếu cần)
+        console.log(data);
+              alert("Xoá truyện thành công!");
+        // Sau khi xoá thành công, làm mới danh sách truyện trên giao diện
+        loadAllStories();
+      })
+      .catch((error) => console.error("Lỗi khi xoá câu chuyện:", error));
+  }
+
+  // Hàm xử lý sự kiện khi nhấn nút "Sửa"
+  function editStory(storyId) {
+    // Chuyển hướng người dùng đến trang sửa thông tin câu chuyện với ID của câu chuyện được chọn
+    window.location.href = `/editstory/${storyId}`;
+  }
+  function searchStories() {
+  const input = document.getElementById("searchInput").value.toUpperCase();
+  const table = document.getElementById("storyTableBody");
+  const rows = table.getElementsByTagName("tr");
+
+  for (let i = 0; i < rows.length; i++) {
+    const title = rows[i].getElementsByTagName("td")[2].innerText.toUpperCase();
+    const genre = rows[i].getElementsByTagName("td")[3].innerText.toUpperCase();
+    const author = rows[i].getElementsByTagName("td")[4].innerText.toUpperCase();
+    
+    if (title.includes(input) || genre.includes(input) || author.includes(input)) {
+      rows[i].style.display = "";
+    } else {
+      rows[i].style.display = "none";
+    }
+  }
+}
+</script
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm Truyện</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+    />
+  </head>
+  <body>
+    <div>
+      <h1 class="text-center mt-3">Thêm Truyện</h1>
+      <div style="max-width: 400px; margin: 0 auto">
+        <form
+          id="formregister"
+          class="was-validated"
+          method="POST"
+          enctype="multipart/form-data"
+          action="/api/addstory"
+        >
+          <div class="mb-3">
+            <label for="genre" class="form-label">Thể loại Truyện:</label>
+            <select id="genre" class="form-select" name="genre" required>
+              <option value="" disabled selected>Chọn Thể loại Truyện</option>
+              <option value="Chuyển Sinh">Chuyển Sinh</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Cổ Đại">Cổ Đại</option>
+              <option value="Manhua">Manhua</option>
+              <option value="Ngôn tình">Ngôn tình</option>
+              <option value="Thiếu Nhi">Thiếu Nhi</option>
+            </select>
+            <div class="invalid-feedback">Vui lòng chọn loại truyện.</div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="title" class="form-label">Tên Truyện:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="Nhập tên Truyện"
+              required
+            />
+            <div class="valid-feedback">Hợp lệ.</div>
+            <div class="invalid-feedback">Vui lòng điền tên Truyện.</div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="author" class="form-label">Tác Giả:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="author"
+              name="author"
+              placeholder="Nhập Tác Giả"
+              required
+            />
+            <div class="valid-feedback">Hợp lệ.</div>
+            <div class="invalid-feedback">Vui lòng điền Tác Giả.</div>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Mô tả:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="description"
+              name="description"
+              placeholder="Nhập Mô tả"
+              required
+            />
+            <div class="valid-feedback">Hợp lệ.</div>
+            <div class="invalid-feedback">Vui lòng điền Mô tả.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Trạng thái:</label><br />
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="status"
+                id="statusOngoing"
+                value="Ongoing"
+                required
+              />
+              <label class="form-check-label" for="statusOngoing"
+                >Ongoing</label
+              >
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="status"
+                id="statusCompleted"
+                value="Completed"
+                required
+              />
+              <label class="form-check-label" for="statusCompleted"
+                >Completed</label
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Hot:</label><br />
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="isHot"
+                id="hotYes"
+                value="true"
+                required
+              />
+              <label class="form-check-label" for="hotYes">Có</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="isHot"
+                id="hotNo"
+                value="false"
+                required
+              />
+              <label class="form-check-label" for="hotNo">Không</label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">VIP:</label><br />
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="isVIP"
+                id="vipYes"
+                value="true"
+                required
+              />
+              <label class="form-check-label" for="vipYes">Có</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="isVIP"
+                id="vipNo"
+                value="false"
+                required
+              />
+              <label class="form-check-label" for="vipNo">Không</label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="coverImage" class="form-label">Ảnh Bìa:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="coverImage"
+              name="coverImage"
+              accept="image/*"
+              multiple
+              required
+            />
+            <div class="valid-feedback">Hợp lệ.</div>
+            <div class="invalid-feedback">Vui lòng chọn một tệp ảnh.</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="yearPublished" class="form-label">Ngày xuất bản:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="yearPublished"
+              name="yearPublished"
+              required
+            />
+            <div class="valid-feedback">Hợp lệ.</div>
+            <div class="invalid-feedback">Vui lòng chọn Ngày xuất bản.</div>
+          </div>
+
+          <button
+            id="submitButton"
+            class="btn btn-primary d-block mx-auto mt-3"
+            type="submit"
+          >
+            Thêm
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Initialize Bootstrap Datepicker
+        $("#yearPublished").datepicker({
+          format: "dd/mm/yyyy",
+          autoclose: true,
+          todayHighlight: true,
+        });
+      });
+
+      $(document).ready(function () {
+        $("#formregister").submit(function (event) {
+          // Ngăn chặn hành động mặc định của form (không gửi lại trang)
+          event.preventDefault();
+
+          // Thu thập dữ liệu từ form
+          var formData = new FormData($(this)[0]); // Sử dụng FormData để lấy dữ liệu form
+
+          // Gửi dữ liệu đến server
+          $.ajax({
+            type: "POST",
+            url: "/api/addstory",
+            data: formData, // Sử dụng FormData để gửi dữ liệu
+            contentType: false, // Không thiết lập contentType
+            processData: false, // Không xử lý dữ liệu
+            success: function (response) {
+              // Xử lý khi request thành công
+              console.log(response);
+              // Hiển thị cảnh báo thành công
+              alert("Thêm truyện thành công!");
+
+              // Quay lại trang danh sách truyện sau khi thêm thành công
+              window.location.href = "/liststory";
+            },
+            error: function (xhr, status, error) {
+              // Xử lý khi request gặp lỗi
+              console.error(error);
+              // Thông báo lỗi cho người dùng nếu cần
+              alert("Đã xảy ra lỗi khi thêm truyện. Vui lòng thử lại sau.");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
